@@ -10,6 +10,12 @@ random_device random;
 mt19937 engine(random());
 uniform_int_distribution<int> distribution(1, 9);
 
+//변수 설정
+int Ecount = 0;
+int Fcount = 0;
+int Filtercount = 0;
+bool filter = false;
+
 
 //행렬 생성
 vector<vector<int>> randmatrix() {
@@ -54,11 +60,13 @@ vector<vector<int>> submatrix(const vector<vector<int>>& A, const vector<vector<
 	return C;
 }
 //행렬 곱셈
-vector<vector<int>> addmatrix(const vector<vector<int>>& A, const vector<vector<int>>& B) {
+vector<vector<int>> mulmatrix(const vector<vector<int>>& A, const vector<vector<int>>& B) {
 	vector<vector<int>> C(4, vector<int>(4));
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			C[i][j] = A[i][j] * B[i][j];
+			for (int k = 0; k < 4; k++) {
+				C[i][j] += A[i][k] * B[k][j];
+			}
 		}
 	}
 	return C;
@@ -86,6 +94,7 @@ vector<vector<int>> transmatrix(const vector<vector<int>>& M) {
 
 //최소값 빼기
 vector<vector<int>> minmatrix(const vector<vector<int>>& M) {
+	//최소값 찾기
 	int min = M[0][0];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -93,17 +102,29 @@ vector<vector<int>> minmatrix(const vector<vector<int>>& M) {
 				min = M[i][j];
 		}
 	}
+	//백업
+	vector<vector<int>> backup(4, vector<int>(4));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			backup[i][j] = M[i][j];
+		}
+	}
+	//최소값 빼기
 	vector<vector<int>> N(4, vector<int>(4));
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			N[i][j] = M[i][j] - min;
 		}
 	}
-	return N;
+	if (Ecount % 2 == 0)
+		return backup;
+	else
+		return N;
 }
 
 //최대값 더하기
 vector<vector<int>> maxmatrix(const vector<vector<int>>& M) {
+	//최대값 찾기
 	int max = M[0][0];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -111,33 +132,41 @@ vector<vector<int>> maxmatrix(const vector<vector<int>>& M) {
 				max = M[i][j];
 		}
 	}
+	//백업
+	vector<vector<int>> backup(4, vector<int>(4));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			backup[i][j] = M[i][j];
+		}
+	}
+	//최대값 더하기
 	vector<vector<int>> N(4, vector<int>(4));
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			N[i][j] = M[i][j] + max;
 		}
 	}
-	return N;
+	if (Fcount % 2 == 0)
+		return backup;
+	else
+		return N;
 }
 //배수 출력
 vector<vector<int>> filtermatrix(const vector<vector<int>>& M, int n) {
 	vector<vector<int>> N(4, vector<int>(4));
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-
+			if (M[i][j] % n == 0)
+				N[i][j] = M[i][j];
+			else
+				N[i][j] = 0;
 		}
 	}
-}
-
-
-//초기화
-void init() {
-
-
+	return N;
 }
 
 //메뉴 출력
-void menu() {
+char menu() {
 	cout << "m: 행렬의 곱셈\n"
 		<< "a: 행렬의 덧셈\n"
 		<< "d: 행렬의 뺄셈\n"
@@ -147,7 +176,11 @@ void menu() {
 		<< "f: 행렬의 값 중에서 최대값을 찾아 그 값을 행렬의 모든 값에 더한다\n"
 		<< "숫자 (1~9): 입력한 숫자의 배수만 출력\n"
 		<< "s: 행렬의 값을 새로 랜덤하게 설정\n"
-		<< "q: 프로그램 종료\n";
+		<< "q: 프로그램 종료\n"
+		<< "메뉴 입력: ";
+	char input;
+	cin >> input;
+	return input;
 }
 
 int main() {
@@ -155,6 +188,80 @@ int main() {
 	vector<vector<int>> B = randmatrix();
 	printmatrix(A);
 	printmatrix(B);
-	menu();
+
+	while (1) {
+		char selected = menu();
+
+		if (selected >= '1' && selected <= '9') {
+			int n = selected - '0';
+			if (!filter) {
+				filter = true;
+				Filtercount = n;
+			}
+			else if (filter && Filtercount == n) {
+				filter = false;
+			}
+			else {
+				Filtercount = n;
+			}
+
+			if (filter) {
+				printmatrix(filtermatrix(A, Filtercount));
+				printmatrix(filtermatrix(B, Filtercount));
+			}
+			else {
+				printmatrix(A);
+				printmatrix(B);
+			}
+			continue;
+		}
+
+		switch (selected) {
+		case 'm':
+			printmatrix(mulmatrix(A, B));
+			break;
+		case 'a':
+			printmatrix(addmatrix(A, B));
+			break;
+		case 'd':
+			printmatrix(submatrix(A, B));
+			break;
+		case 'r':
+			cout << determinant(A) << "\n";
+			cout << "\n";
+			cout << determinant(B) << "\n";
+			break;
+		case 't':
+			printmatrix(transmatrix(A));
+			cout << "\n";
+			printmatrix(transmatrix(B));
+			break;
+		case 'e':
+			Ecount++;
+			printmatrix(minmatrix(A));
+			cout << "\n";
+			printmatrix(minmatrix(B));
+			break;
+		case 'f':
+			Fcount++;
+			printmatrix(maxmatrix(A));
+			cout << "\n";
+			printmatrix(maxmatrix(B));
+			break;
+		case 's':
+			A = randmatrix();
+			B = randmatrix();
+			printmatrix(A);
+			cout << "\n";
+			printmatrix(B);
+			break;
+		case 'q':
+			return 0;
+			break;
+		default:
+			cout << "유효하지 않은 입력\n";
+			break;
+		}
+	}
 	return 0;
 }

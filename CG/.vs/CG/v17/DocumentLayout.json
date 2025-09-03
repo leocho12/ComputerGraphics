@@ -1,10 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\",
+  "WorkspaceRootPath": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,8 +17,8 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 302,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -26,16 +30,39 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "warmup2.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
+              "RelativeDocumentMoniker": "CG\\warmup2.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
+              "RelativeToolTip": "CG\\warmup2.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-03T12:44:20.543Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "warmup1.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp",
               "RelativeDocumentMoniker": "CG\\warmup1.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup1.cpp",
               "RelativeToolTip": "CG\\warmup1.cpp",
-              "ViewState": "AgIAAIoAAAAAAAAAAAAYwKAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAAAMQAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-09-03T10:24:41.661Z",
               "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 98,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
             }
           ]
         }
