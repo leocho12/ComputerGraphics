@@ -1,6 +1,9 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<cstdlib>
+#include<chrono>
+#include<thread>
 
 using namespace std;
 
@@ -88,16 +91,25 @@ bool inputcoord(int& row, int& col) {
 //힌트
 void hint() {
 	cout << "힌트 출력\n";
-	for (int i = 0; i < SIZE; i++)
-		for (int j = 0; j < SIZE; j++)
+
+	for (int i = 1; i < SIZE; i++)
+		for (int j = 1; j < SIZE; j++)
 			board[i][j] = answer[i - 1][j - 1];
+
 	printboard();
 
+	this_thread::sleep_for(chrono::seconds(2));
+
 	//가리기
-	for (int i = 0; i < SIZE; i++)
-		for (int j = 0; j < SIZE; j++)
-			board[i][j] = '*';
+	for (int i = 1; i < SIZE; i++) {
+		for (int j = 1; j < SIZE; j++) {
+			if (!revealed[i - 1][j - 1]) {
+				board[i][j] = '*';
+			}
+		}
+	}
 }
+
 
 //한 턴
 void turn() {
@@ -115,7 +127,7 @@ void turn() {
 	char a = answer[row1][col1];
 	char b = answer[row2][col2];
 
-	if (a == b | a == '@' || b == '@') {
+	if (a == b || a == '@' || b == '@') {
 		cout << "일치\n";
 		revealed[row1][col1] = true;
 		revealed[row2][col2] = true;
@@ -125,11 +137,13 @@ void turn() {
 		board[row1 + 1][col1 + 1] = '*';
 		board[row2 + 1][col2 + 1] = '*';
 	}
+	this_thread::sleep_for(chrono::seconds(2));
 }
 
 // 메뉴 출력
 string printmenu() {
-	cout << "r: 게임을 리셋하고 다시 시작\n"
+	cout << "n: 카드 선택\n" 
+		<< "r: 게임을 리셋하고 다시 시작\n"
 		<< "h: 보드칸의 모든 문자들을 잠시 보여주고 다시 원래대로 출력\n"
 		<< "q: 게임 종료\n";
 	string input;
@@ -141,7 +155,7 @@ int main() {
 	srand((unsigned int)time(0));
 	initboard();
 	while (true) {
-
+		system("cls");
 		printboard();
 		string menu = printmenu();
 
@@ -153,11 +167,8 @@ int main() {
 			cout << "종료\n";
 			return 0;
 		}
-		else {
-			string first = menu;
-			string second;
-			cin >> second;
-
+		else if(menu=="n") {
+			turn();
 		}
 	}
 
