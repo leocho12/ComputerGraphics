@@ -80,14 +80,11 @@ void CountPoints() {
 
 //점 위치 감소
 void DecreasePositions() {
-	for (auto& point : points) {
-		if (point.valid) {
-			point.x--;
-			point.y--;
-			point.z--;
-		}
+	Point temp = points[0];
+	for (int i = 0; i < MAX_POINTS - 1; i++) {
+		points[i] = points[i + 1];
 	}
-	return;
+	points[MAX_POINTS - 1] = temp;
 }
 
 //리스트 비우기
@@ -138,7 +135,7 @@ char menu() {
 		<< "a: 리스트에 저장된 점의 개수를 출력\n"
 		<< "b: 점들의 위치를 한 칸씩 감소\n"
 		<< "c: 리스트를 비운다. 리스트를 비운 후 다시 입력하면 0번부터 저장\n"
-		<< "f: 원점과의 거리를 정렬하여 오름차순(또는 내림차순, 본인이 결정)으로 정렬하여 출력한다. 인덱스 0번부터 빈 칸없이 저장하여 출력한다. 다시 누르면 원래대로 출력\n"
+		<< "f: 원점과의 거리를 정렬하여 오름차순으로 정렬하여 출력한다. 인덱스 0번부터 빈 칸없이 저장하여 출력한다. 다시 누르면 원래대로 출력\n"
 		<< "q: 종료\n"
 		<< "메뉴 입력: ";
 	char input;

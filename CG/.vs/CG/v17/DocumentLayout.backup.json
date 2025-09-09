@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +14,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 302,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "warmup3.cpp",
+              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
+              "RelativeDocumentMoniker": "CG\\warmup3.cpp",
+              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
+              "RelativeToolTip": "CG\\warmup3.cpp",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAYwFYAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-09T03:46:18.644Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
@@ -23,19 +36,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "warmup4.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
-              "RelativeDocumentMoniker": "CG\\warmup4.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
-              "RelativeToolTip": "CG\\warmup4.cpp",
-              "ViewState": "AgIAAGQAAAAAAAAAAAAmwHAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-09-08T05:48:38.536Z",
-              "EditorCaption": ""
             }
           ]
         },
