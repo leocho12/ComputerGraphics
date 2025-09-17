@@ -24,7 +24,7 @@ GLvoid AddRandomRect(int winW, int winH);
 GLvoid Mouse(int button, int state, int x, int y);
 GLvoid Motion(int x, int y);
 Rect mergeRect(const Rect& r1, const Rect& r2);
-
+vector<Rect> splitRect(const Rect& r);
 
 
 //--- 변수선언
@@ -155,15 +155,43 @@ GLvoid Mouse(int button, int state, int x, int y)
 				rects[i].isSelected = false;
 			}
 		}
-	} else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		// 드래그 종료
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		if (selectedRectIndex != -1) {
+			Rect moved = rects[selectedRectIndex];
+
+			// 다른 사각형들과 겹치는지 확인
+			for (int i = 0; i < rects.size(); i++) {
+				if (i == selectedRectIndex) continue;
+
+				if (isOverlap(moved, rects[i])) {
+					// 합치기
+					Rect merged = mergeRect(moved, rects[i]);
+
+					// 기존 두 사각형 제거
+					if (i > selectedRectIndex) {
+						rects.erase(rects.begin() + i);
+						rects.erase(rects.begin() + selectedRectIndex);
+					}
+					else {
+						rects.erase(rects.begin() + selectedRectIndex);
+						rects.erase(rects.begin() + i);
+					}
+
+					// 새 사각형 추가
+					rects.push_back(merged);
+					break;
+				}
+			}
+		}
+
+		// 드래그 종료 처리
 		selectedRectIndex = -1;
 		prevMouseX = -1;
 		prevMouseY = -1;
-		for(auto& r : rects) {
-			r.isSelected = false;
-		}
-	} 
+		for (auto& r : rects) r.isSelected = false;
+	}
+
 	glutPostRedisplay();
 }
 
@@ -200,4 +228,29 @@ Rect mergeRect(const Rect& r1, const Rect& r2)
 	merged.isSelected = false;
 
 	return merged;
+}
+
+vector<Rect> splitRect(const Rect& r)
+{
+	vector<Rect> result;
+	bool splitvertically = rand() % 2;
+
+	if (splitvertically) {
+		float midX = (r.x1 + r.x2) / 2.0f;
+
+		Rect r1 = { r.x1, r.y1, midX, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
+		Rect r2 = { midX, r.y1, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
+		result.push_back(r1);
+		result.push_back(r2);
+
+	}
+	else {
+		float midY = (r.y1 + r.y2) / 2.0f;
+
+		Rect r3 = { r.x1, r.y1, r.x2, midY, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
+		Rect r4 = { r.x1, midY, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
+		result.push_back(r3);
+		result.push_back(r4);
+	}
+	return result;
 }
