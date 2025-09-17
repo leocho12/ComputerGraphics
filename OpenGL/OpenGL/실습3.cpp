@@ -1,17 +1,27 @@
 #include <iostream>
-#include <gl/glew.h> //--- 필요한 헤더파일 include
+#include<vector>
+#include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
+
+using namespace std;
+
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid Timer(int value);
 
+// 사각형 구조체
 struct Rect {
 	float x1, y1, x2, y2; // 사각형 좌표
 	float r, g, b;        // 색상 저장
 	bool isSelected = false; // 선택 여부
 };
+
+// 사각형 컨테이너
+vector<RECT> rects;
+
+float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
+
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -35,6 +45,18 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutKeyboardFunc(Keyboard); //--- 키보드 입력 콜백함수 지정
 	glutMainLoop(); //--- 이벤트 처리 시작
 }
+
+void DrawRect(const Rect& rect) //--- 사각형 그리기 함수
+{
+	glColor3f(rect.r, rect.g, rect.b);
+	glBegin(GL_QUADS);
+	glVertex2f(rect.x1, rect.y1);
+	glVertex2f(rect.x2, rect.y1);
+	glVertex2f(rect.x2, rect.y2);
+	glVertex2f(rect.x1, rect.y2);
+	glEnd();
+}
+
 GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 {
 	//--- 변경된 배경색 설정
@@ -42,10 +64,12 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glClear(GL_COLOR_BUFFER_BIT); //--- 설정된 색으로 전체를 칠하기
 	glutSwapBuffers(); //--- 화면에 출력하기
 }
+
 GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 {
 	glViewport(0, 0, w, h);
 }
+
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
