@@ -84,7 +84,7 @@ GLvoid Reshape(int w, int h)//--- 윈도우 크기 변경시 좌표계 재설정
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'a':AddRandomRect(800,600);
+	case 'a':AddRandomRect(800, 600); break;
 	case 'q':exit(0); break; //--- 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔 때마다 출력 콜백 함수를 호출하여 화면을 refresh 한다
