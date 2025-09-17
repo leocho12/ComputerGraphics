@@ -138,62 +138,140 @@ GLvoid AddRandomRect(int winW, int winH)
 //--- 마우스 클릭
 GLvoid Mouse(int button, int state, int x, int y)
 {
-	int winH = glutGet(GLUT_WINDOW_HEIGHT);
-	int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
+    int winH = glutGet(GLUT_WINDOW_HEIGHT);
+    int mouseY = winH - y; // OpenGL 좌표계로 변환
 
-	if(button== GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		// 사각형 선택
-		selectedRectIndex = -1; // 초기화
-		for(int i = 0; i < rects.size(); i++) {
-			const Rect& r = rects[i];
-			if(x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
-				selectedRectIndex = i;
-				rects[i].isSelected = true;
-				prevMouseX = x;
-				prevMouseY = mouseY;
-			} else {
-				rects[i].isSelected = false;
-			}
-		}
-	}
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		if (selectedRectIndex != -1) {
-			Rect moved = rects[selectedRectIndex];
+    // ==========================
+    // 왼쪽 버튼: 선택 & 합치기
+    // ==========================
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        selectedRectIndex = -1;
+        for (int i = rects.size() - 1; i >= 0; i--) { // 뒤에서부터 검사 → 위에 있는 사각형 우선
+            Rect& r = rects[i];
+            if (x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
+                selectedRectIndex = i;
+                r.isSelected = true;
+                prevMouseX = x;
+                prevMouseY = mouseY;
 
-			// 다른 사각형들과 겹치는지 확인
-			for (int i = 0; i < rects.size(); i++) {
-				if (i == selectedRectIndex) continue;
+                // 선택된 사각형을 맨 뒤로 이동 (항상 위에 보이도록)
+                Rect picked = r;
+                rects.erase(rects.begin() + i);
+                rects.push_back(picked);
+                selectedRectIndex = rects.size() - 1;
 
-				if (isOverlap(moved, rects[i])) {
-					// 합치기
-					Rect merged = mergeRect(moved, rects[i]);
+                break;
+            }
+            else {
+                r.isSelected = false;
+            }
+        }
+    }
+    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        if (selectedRectIndex != -1) {
+            Rect moved = rects[selectedRectIndex];
 
-					// 기존 두 사각형 제거
-					if (i > selectedRectIndex) {
-						rects.erase(rects.begin() + i);
-						rects.erase(rects.begin() + selectedRectIndex);
-					}
-					else {
-						rects.erase(rects.begin() + selectedRectIndex);
-						rects.erase(rects.begin() + i);
-					}
+            // 다른 사각형과 겹치는지 확인 → 합치기
+            for (int i = 0; i < rects.size(); i++) {
+                if (i == selectedRectIndex) continue;
+                if (!(moved.x2 < rects[i].x1 || moved.x1 > rects[i].x2 ||
+                    moved.y2 < rects[i].y1 || moved.y1 > rects[i].y2)) {
+                    // 겹침 → 합치기
+                    Rect merged;
+                    merged.x1 = min(moved.x1, rects[i].x1);
+                    merged.y1 = min(moved.y1, rects[i].y1);
+                    merged.x2 = max(moved.x2, rects[i].x2);
+                    merged.y2 = max(moved.y2, rects[i].y2);
+                    merged.r = (float)(rand() % 100) / 100.0f;
+                    merged.g = (float)(rand() % 100) / 100.0f;
+                    merged.b = (float)(rand() % 100) / 100.0f;
+                    merged.isSelected = false;
 
-					// 새 사각형 추가
-					rects.push_back(merged);
-					break;
-				}
-			}
-		}
+                    // 기존 두 사각형 삭제
+                    if (i > selectedRectIndex) {
+                        rects.erase(rects.begin() + i);
+                        rects.erase(rects.begin() + selectedRectIndex);
+                    }
+                    else {
+                        rects.erase(rects.begin() + selectedRectIndex);
+                        rects.erase(rects.begin() + i);
+                    }
 
-		// 드래그 종료 처리
-		selectedRectIndex = -1;
-		prevMouseX = -1;
-		prevMouseY = -1;
-		for (auto& r : rects) r.isSelected = false;
-	}
+                    // 합쳐진 사각형 추가
+                    rects.push_back(merged);
+                    break;
+                }
+            }
+        }
 
-	glutPostRedisplay();
+        // 드래그 종료
+        selectedRectIndex = -1;
+        prevMouseX = -1;
+        prevMouseY = -1;
+        for (auto& r : rects) r.isSelected = false;
+    }
+
+    // ==========================
+    // 오른쪽 버튼: 분리하기
+    // ==========================
+    else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        int targetIndex = -1;
+        for (int i = rects.size() - 1; i >= 0; i--) {
+            const Rect& r = rects[i];
+            if (x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
+                targetIndex = i;
+                break;
+            }
+        }
+
+        if (targetIndex != -1) {
+            Rect target = rects[targetIndex];
+            rects.erase(rects.begin() + targetIndex);
+
+            // 분리 (가로 또는 세로 랜덤)
+            bool splitVertically = rand() % 2;
+            if (splitVertically) {
+                float midX = (target.x1 + target.x2) / 2.0f;
+
+                Rect left = { target.x1, target.y1, midX, target.y2,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    false };
+
+                Rect right = { midX, target.y1, target.x2, target.y2,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    false };
+
+                if (rects.size() < 30) rects.push_back(left);
+                if (rects.size() < 30) rects.push_back(right);
+            }
+            else {
+                float midY = (target.y1 + target.y2) / 2.0f;
+
+                Rect bottom = { target.x1, target.y1, target.x2, midY,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    false };
+
+                Rect top = { target.x1, midY, target.x2, target.y2,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    (float)(rand() % 100) / 100.0f,
+                    false };
+
+                if (rects.size() < 30) rects.push_back(bottom);
+                if (rects.size() < 30) rects.push_back(top);
+            }
+        }
+    }
+
+    glutPostRedisplay();
 }
+
 
 //--- 마우스 드래그 처리
 GLvoid Motion(int x, int y) {
