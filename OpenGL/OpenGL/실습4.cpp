@@ -22,18 +22,12 @@ GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid AddRandomRect(int winW, int winH);
 GLvoid Mouse(int button, int state, int x, int y);
-GLvoid Motion(int x, int y);
-Rect mergeRect(const Rect& r1, const Rect& r2);
-vector<Rect> splitRect(const Rect& r);
+
 
 
 //--- 변수선언
 float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
-int selectedRectIndex = -1; // 선택된 사각형 인덱스
-int prevMouseX = -1, prevMouseY = -1; // 이전 마우스 위치
-bool isOverlap(const Rect& r1, const Rect& r2) {
-    return !(r1.x2 < r2.x1 || r1.x1 > r2.x2 || r1.y2 < r2.y1 || r1.y1 > r2.y2);
-}
+
 
 
 //--- 윈도우 출력하고 콜백함수 설정
@@ -58,7 +52,6 @@ void main(int argc, char** argv)
     glutReshapeFunc(Reshape); //--- 다시 그리기 콜백함수 지정
     glutKeyboardFunc(Keyboard); //--- 키보드 입력 콜백함수 지정
     glutMouseFunc(Mouse);     // 클릭/해제 이벤트
-    glutMotionFunc(Motion);   // 드래그 이벤트
     glutMainLoop(); //--- 이벤트 처리 시작
 
 
@@ -272,63 +265,3 @@ GLvoid Mouse(int button, int state, int x, int y)
     glutPostRedisplay();
 }
 
-
-//--- 마우스 드래그 처리
-GLvoid Motion(int x, int y) {
-    if (selectedRectIndex != -1) {
-        int winH = glutGet(GLUT_WINDOW_HEIGHT);
-        int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
-        int dx = x - prevMouseX;
-        int dy = mouseY - prevMouseY;
-        Rect& r = rects[selectedRectIndex];
-        r.x1 += dx;
-        r.x2 += dx;
-        r.y1 += dy;
-        r.y2 += dy;
-        prevMouseX = x;
-        prevMouseY = mouseY;
-        glutPostRedisplay();
-    }
-}
-
-Rect mergeRect(const Rect& r1, const Rect& r2)
-{
-    Rect merged;
-
-    merged.x1 = min(r1.x1, r2.x1);
-    merged.y1 = min(r1.y1, r2.y1);
-    merged.x2 = max(r1.x2, r2.x2);
-    merged.y2 = max(r1.y2, r2.y2);
-
-    merged.r = (float)(rand() % 100) / 100.0f;
-    merged.g = (float)(rand() % 100) / 100.0f;
-    merged.b = (float)(rand() % 100) / 100.0f;
-    merged.isSelected = false;
-
-    return merged;
-}
-
-vector<Rect> splitRect(const Rect& r)
-{
-    vector<Rect> result;
-    bool splitvertically = rand() % 2;
-
-    if (splitvertically) {
-        float midX = (r.x1 + r.x2) / 2.0f;
-
-        Rect r1 = { r.x1, r.y1, midX, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        Rect r2 = { midX, r.y1, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        result.push_back(r1);
-        result.push_back(r2);
-
-    }
-    else {
-        float midY = (r.y1 + r.y2) / 2.0f;
-
-        Rect r3 = { r.x1, r.y1, r.x2, midY, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        Rect r4 = { r.x1, midY, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        result.push_back(r3);
-        result.push_back(r4);
-    }
-    return result;
-}
