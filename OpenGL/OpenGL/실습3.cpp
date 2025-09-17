@@ -9,6 +9,7 @@ using namespace std;
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid AddRandomRect(int winW, int winH);
 
 // 사각형 구조체
 struct Rect {
@@ -83,8 +84,35 @@ GLvoid Reshape(int w, int h)//--- 윈도우 크기 변경시 좌표계 재설정
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'a':;
+	case 'a':AddRandomRect(800,600);
 	case 'q':exit(0); break; //--- 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔 때마다 출력 콜백 함수를 호출하여 화면을 refresh 한다
+}
+
+GLvoid AddRandomRect(int winW, int winH)
+{
+	Rect newRect;
+
+	float w = rand() % 100 + 20; //--- 사각형의 너비
+	float h = rand() % 100 + 20; //--- 사각형의 높이
+
+	//--- 위치
+	newRect.x1 = rand() % (winW - (int)w);
+	newRect.y1 = rand() % (winH - (int)h);
+	newRect.x2 = newRect.x1 + w;
+	newRect.y2 = newRect.y1 + h;
+
+	//--- 색상
+	newRect.r = (float)(rand() % 100) / 100.0f;
+	newRect.g = (float)(rand() % 100) / 100.0f;
+	newRect.b = (float)(rand() % 100) / 100.0f;
+
+	newRect.isSelected = false;
+
+	//--- 30개 개수제한
+	if(rects.size()<30)
+		rects.push_back(newRect);
+
+	return GLvoid();
 }
