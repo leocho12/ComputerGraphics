@@ -57,18 +57,28 @@ void DrawRect(const Rect& rect) //--- 사각형 그리기 함수
 	glEnd();
 }
 
-GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
+GLvoid drawScene() //--- 화면 출력
 {
 	//--- 변경된 배경색 설정
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);//--- 바탕색을 변경
+	glClearColor(Bgcolor[0],Bgcolor[1],Bgcolor[2], 1.0f);//--- 바탕색을 변경
 	glClear(GL_COLOR_BUFFER_BIT); //--- 설정된 색으로 전체를 칠하기
-	glutSwapBuffers(); //--- 화면에 출력하기
+	
+	for(const auto& r : rects) {
+		DrawRect(r);
+	}
+
+	glutSwapBuffers(); //--- 화면에 출력
 }
 
-GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
+GLvoid Reshape(int w, int h)//--- 윈도우 크기 변경시 좌표계 재설정
 {
-	glViewport(0, 0, w, h);
+	glViewport(0, 0, w, h);          // 윈도우 전체를 그리기 영역으로 지정
+	glMatrixMode(GL_PROJECTION);     // 투영 행렬 모드로 전환
+	glLoadIdentity();                // 이전 설정 초기화
+	gluOrtho2D(0, w, 0, h);          // 2D 좌표계 설정 (0~w, 0~h)
+	glMatrixMode(GL_MODELVIEW);      // 다시 모델뷰 행렬 모드로 전환
 }
+
 
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
