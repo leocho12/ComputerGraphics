@@ -10,6 +10,8 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid AddRandomRect(int winW, int winH);
+GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Motion(int x, int y);
 
 // 사각형 구조체
 struct Rect {
@@ -22,9 +24,13 @@ struct Rect {
 vector<Rect> rects;
 
 float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
+int selectedRectIndex = -1; // 선택된 사각형 인덱스
+int prevMouseX = -1, prevMouseY = -1; // 이전 마우스 위치
 
 
-void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
+
+//--- 윈도우 출력하고 콜백함수 설정
+void main(int argc, char** argv) 
 {
 	//--- 윈도우 생성
 	glutInit(&argc, argv); //--- glut 초기화
@@ -44,10 +50,15 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutDisplayFunc(drawScene); //--- 출력 콜백함수의 지정
 	glutReshapeFunc(Reshape); //--- 다시 그리기 콜백함수 지정
 	glutKeyboardFunc(Keyboard); //--- 키보드 입력 콜백함수 지정
+	glutMouseFunc(Mouse);     // 클릭/해제 이벤트
+	glutMotionFunc(Motion);   // 드래그 이벤트
 	glutMainLoop(); //--- 이벤트 처리 시작
+	
+
 }
 
-void DrawRect(const Rect& rect) //--- 사각형 그리기 함수
+//--- 사각형 그리기 함수
+void DrawRect(const Rect& rect) 
 {
 	glColor3f(rect.r, rect.g, rect.b);
 	glBegin(GL_QUADS);
@@ -58,7 +69,8 @@ void DrawRect(const Rect& rect) //--- 사각형 그리기 함수
 	glEnd();
 }
 
-GLvoid drawScene() //--- 화면 출력
+//--- 화면 출력
+GLvoid drawScene() 
 {
 	//--- 변경된 배경색 설정
 	glClearColor(Bgcolor[0],Bgcolor[1],Bgcolor[2], 1.0f);//--- 바탕색을 변경
@@ -71,7 +83,8 @@ GLvoid drawScene() //--- 화면 출력
 	glutSwapBuffers(); //--- 화면에 출력
 }
 
-GLvoid Reshape(int w, int h)//--- 윈도우 크기 변경시 좌표계 재설정
+//--- 윈도우 크기 변경시 좌표계 재설정
+GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);          // 윈도우 전체를 그리기 영역으로 지정
 	glMatrixMode(GL_PROJECTION);     // 투영 행렬 모드로 전환
@@ -80,7 +93,7 @@ GLvoid Reshape(int w, int h)//--- 윈도우 크기 변경시 좌표계 재설정
 	glMatrixMode(GL_MODELVIEW);      // 다시 모델뷰 행렬 모드로 전환
 }
 
-
+//--- 키보드 입력 처리
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
@@ -113,6 +126,54 @@ GLvoid AddRandomRect(int winW, int winH)
 	//--- 30개 개수제한
 	if(rects.size()<30)
 		rects.push_back(newRect);
+}
 
-	return GLvoid();
+//--- 마우스 클릭
+GLvoid Mouse(int button, int state, int x, int y)
+{
+	int winH = glutGet(GLUT_WINDOW_HEIGHT);
+	int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
+
+	if(button== GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		// 사각형 선택
+		selectedRectIndex = -1; // 초기화
+		for(int i = 0; i < rects.size(); i++) {
+			const Rect& r = rects[i];
+			if(x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
+				selectedRectIndex = i;
+				rects[i].isSelected = true;
+				prevMouseX = x;
+				prevMouseY = mouseY;
+			} else {
+				rects[i].isSelected = false;
+			}
+		}
+	} else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		// 드래그 종료
+		selectedRectIndex = -1;
+		prevMouseX = -1;
+		prevMouseY = -1;
+		for(auto& r : rects) {
+			r.isSelected = false;
+		}
+	} 
+	glutPostRedisplay();
+}
+
+//--- 마우스 드래그 처리
+GLvoid Motion(int x, int y) {
+	if(selectedRectIndex != -1) {
+		int winH = glutGet(GLUT_WINDOW_HEIGHT);
+		int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
+		int dx = x - prevMouseX;
+		int dy = mouseY - prevMouseY;
+		Rect& r = rects[selectedRectIndex];
+		r.x1 += dx;
+		r.x2 += dx;
+		r.y1 += dy;
+		r.y2 += dy;
+		prevMouseX = x;
+		prevMouseY = mouseY;
+		glutPostRedisplay();
+	}
 }
