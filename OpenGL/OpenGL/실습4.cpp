@@ -28,7 +28,7 @@ GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid AddRandomRect(int winW, int winH);
 GLvoid Mouse(int button, int state, int x, int y);
-
+void OnTimer(int);
 
 
 //--- 변수선언
@@ -44,7 +44,7 @@ void main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //--- 디스플레이 모드 설정
     glutInitWindowPosition(0, 0); //--- 윈도우의 위치 지정
     glutInitWindowSize(800, 600); //--- 윈도우의 크기 지정
-    glutCreateWindow("Example1"); //--- 윈도우 생성(윈도우 이름)
+    glutCreateWindow("Example4"); //--- 윈도우 생성(윈도우 이름)
     //--- GLEW 초기화
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) //--- glew 초기화 
@@ -58,6 +58,9 @@ void main(int argc, char** argv)
     glutReshapeFunc(Reshape); //--- 다시 그리기 콜백함수 지정
     glutKeyboardFunc(Keyboard); //--- 키보드 입력 콜백함수 지정
     glutMouseFunc(Mouse);     // 클릭/해제 이벤트
+
+	glutTimerFunc(10, OnTimer, 0); //타이머 이벤트
+
     glutMainLoop(); //--- 이벤트 처리 시작
 
 
@@ -154,14 +157,14 @@ GLvoid Reshape(int w, int h)
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-    case '1':; break;
-    case '2':; break;
-    case '3':; break;
-    case '4':; break;
+    case '1':for (auto& t : rects) t.aniPos = !t.aniPos; break;
+    case '2':for (auto& t : rects) t.aniPos = !t.aniPos; break;
+    case '3':for(auto& t:rects)t.aniSize=!t.aniSize; break;
+    case '4':for (auto& t : rects) t.aniColor = !t.aniColor; break;
     case '5':; break;
-    case 's':; break;
+    case 's':for (auto& t : rects) { t.aniPos = t.aniSize = t.aniColor = false; }; break;
     case 'm':; break;
-    case 'r':; break;
+    case 'r':rects.clear(); break;
     case 'q':exit(0); break; //--- 프로그램 종료
     }
     glutPostRedisplay(); //--- 배경색이 바뀔 때마다 출력 콜백 함수를 호출하여 화면을 refresh 한다
