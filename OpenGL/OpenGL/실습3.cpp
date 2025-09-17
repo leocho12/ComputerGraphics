@@ -6,13 +6,6 @@
 
 using namespace std;
 
-GLvoid drawScene(GLvoid);
-GLvoid Reshape(int w, int h);
-GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid AddRandomRect(int winW, int winH);
-GLvoid Mouse(int button, int state, int x, int y);
-GLvoid Motion(int x, int y);
-
 // 사각형 구조체
 struct Rect {
 	float x1, y1, x2, y2; // 사각형 좌표
@@ -23,10 +16,24 @@ struct Rect {
 // 사각형 컨테이너
 vector<Rect> rects;
 
+//--- 함수선언
+GLvoid drawScene(GLvoid);
+GLvoid Reshape(int w, int h);
+GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid AddRandomRect(int winW, int winH);
+GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Motion(int x, int y);
+Rect mergeRect(const Rect& r1, const Rect& r2);
+
+
+
+//--- 변수선언
 float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
 int selectedRectIndex = -1; // 선택된 사각형 인덱스
 int prevMouseX = -1, prevMouseY = -1; // 이전 마우스 위치
-
+bool isOverlap(const Rect& r1, const Rect& r2) {
+	return !(r1.x2 < r2.x1 || r1.x1 > r2.x2 || r1.y2 < r2.y1 || r1.y1 > r2.y2);
+}
 
 
 //--- 윈도우 출력하고 콜백함수 설정
@@ -176,4 +183,21 @@ GLvoid Motion(int x, int y) {
 		prevMouseY = mouseY;
 		glutPostRedisplay();
 	}
+}
+
+Rect mergeRect(const Rect& r1, const Rect& r2)
+{
+	Rect merged;
+
+	merged.x1 = min(r1.x1, r2.x1);
+	merged.y1 = min(r1.y1, r2.y1);
+	merged.x2 = max(r1.x2, r2.x2);
+	merged.y2 = max(r1.y2, r2.y2);
+
+	merged.r = (float)(rand() % 100) / 100.0f;
+	merged.g = (float)(rand() % 100) / 100.0f;
+	merged.b = (float)(rand() % 100) / 100.0f;
+	merged.isSelected = false;
+
+	return merged;
 }
