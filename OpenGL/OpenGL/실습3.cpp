@@ -18,20 +18,20 @@ struct Rect {
 };
 
 // 사각형 컨테이너
-vector<RECT> rects;
+vector<Rect> rects;
 
 float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
 
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
-	//--- 윈도우 생성하기
+	//--- 윈도우 생성
 	glutInit(&argc, argv); //--- glut 초기화
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //--- 디스플레이 모드 설정
 	glutInitWindowPosition(0, 0); //--- 윈도우의 위치 지정
 	glutInitWindowSize(800, 600); //--- 윈도우의 크기 지정
 	glutCreateWindow("Example1"); //--- 윈도우 생성(윈도우 이름)
-	//--- GLEW 초기화하기
+	//--- GLEW 초기화
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) //--- glew 초기화 
 	{
