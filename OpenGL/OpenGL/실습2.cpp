@@ -5,8 +5,8 @@
 #include <iostream>
 
 struct Rect {
-    float x1, y1, x2, y2; // 좌하단, 우상단 좌표
-    float r, g, b;        // 색상
+    float x1, y1, x2, y2; 
+    float r, g, b;        
 };
 
 Rect rects[4];
@@ -44,7 +44,7 @@ bool insideRect(int idx, float mx, float my) {
         my >= rects[idx].y1 && my <= rects[idx].y2;
 }
 
-// 사각형 크기 조절 (scale > 1.0 확대, scale < 1.0 축소)
+// 사각형 크기 조절
 void scaleRect(Rect& r, float scale) {
     float cx = (r.x1 + r.x2) / 2.0f;
     float cy = (r.y1 + r.y2) / 2.0f;
@@ -74,13 +74,11 @@ void mouse(int button, int state, int x, int y) {
         if (insideRect(i, mx, my)) {
             clickedRect = true;
             if (button == GLUT_LEFT_BUTTON) {
-                // 사각형 색상 랜덤 변경
                 rects[i].r = randf();
                 rects[i].g = randf();
                 rects[i].b = randf();
             }
             else if (button == GLUT_RIGHT_BUTTON) {
-                // 자기 중심 기준 축소 (90%)
                 scaleRect(rects[i], 0.9f);
             }
         }
@@ -88,14 +86,24 @@ void mouse(int button, int state, int x, int y) {
 
     if (!clickedRect) {
         if (button == GLUT_LEFT_BUTTON) {
-            // 배경색 랜덤 변경
             bgColor[0] = randf(); bgColor[1] = randf(); bgColor[2] = randf();
         }
         else if (button == GLUT_RIGHT_BUTTON) {
-            // 모든 사각형 확대 (110%)
+            int target = 0;
+			float dis = 1e6;
             for (int i = 0; i < 4; i++) {
-                scaleRect(rects[i], 1.1f);
+                for (int j = 0; j < 4; j++) {
+                    if (j == i) continue;
+                    float cx = (rects[j].x1 + rects[j].x2) / 2.0f;
+                    float cy = (rects[j].y1 + rects[j].y2) / 2.0f;
+                    float dist = (mx - cx) * (mx - cx) + (my - cy) * (my - cy);
+                    if (dist < dis) {
+                        dis = dist;
+                        target = j;
+                    }
+                }
             }
+                scaleRect(rects[target], 1.1f);
         }
     }
 
