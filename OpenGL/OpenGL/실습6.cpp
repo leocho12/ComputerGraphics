@@ -27,6 +27,7 @@ GLvoid Reshape(int w, int h);
 GLvoid InitRects(int winW, int winH);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Timer(int value);
 
 
 
@@ -105,9 +106,9 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
     case'1':mode = 1; break;//좌우상하
-    case'2':mode = 1; break;//대각선
-    case'3':mode = 1; break;//그룹
-    case'4':mode = 1; break;//8방향
+    case'2':mode = 2; break;//대각선
+    case'3':mode = 3; break;//그룹
+    case'4':mode = 4; break;//8방향
     case 'r':InitRects(800, 600); break;//종료
     case 'q':exit(0); break; //프로그램 종료
     }
@@ -128,13 +129,85 @@ GLvoid Mouse(int button, int state, int x, int y)
 			float half = r.size / 2.0f;
             if (mouseY >= r.cy - half && mouseY <= r.cy + half && x >= r.cx - half && x <= r.cx + half) {
                 if (mode == 1) {
-
+                    vector<Rect> newRects;
+                    float halfSize = r.size / 2.0f;
+                    float offset[4][2] = {
+                        {-halfSize / 2,-halfSize / 2},
+                        {halfSize / 2,-halfSize / 2},
+                        {-halfSize / 2,halfSize / 2},
+                        {halfSize / 2,halfSize / 2} };
+                    float dirs[4][2] = { {3,0}, {-3,0}, {0,-3}, {0,3} };
+                    for (int j = 0; j < 4; j++) {
+                        Rect copy = r;
+                        copy.cx = r.cx + offset[j][0];
+                        copy.cy = r.cy + offset[j][1];
+                        copy.size = halfSize;
+                        copy.vx = dirs[j][0];
+                        copy.vy = dirs[j][1];
+                        copy.AnimationActive = true;
+                        newRects.push_back(copy);
+                    }
+                    rects.erase(rects.begin() + i);
+                    rects.insert(rects.end(), newRects.begin(), newRects.end());
                 }
                 else if(mode == 2) {
+                    vector<Rect> newRects;
+                    float halfSize = r.size / 2.0f;
+                    float offsets[4][2] = { {-halfSize / 2, -halfSize / 2},
+                                            { halfSize / 2, -halfSize / 2},
+                                            {-halfSize / 2,  halfSize / 2},
+                                            { halfSize / 2,  halfSize / 2} };
+                    float dirs[4][2] = { {3,3}, {-3,3}, {3,-3}, {-3,-3} };
+                    for (int j = 0; j < 4; j++) {
+                        Rect copy = r;
+                        copy.cx = r.cx + offsets[j][0];
+                        copy.cy = r.cy + offsets[j][1];
+                        copy.size = halfSize;
+                        copy.vx = dirs[j][0];
+                        copy.vy = dirs[j][1];
+                        copy.AnimationActive = true;
+                        newRects.push_back(copy);
+                    }
+                    rects.erase(rects.begin() + i);
+                    rects.insert(rects.end(), newRects.begin(), newRects.end());
                 }
                 else if (mode == 3) {
+                    vector<Rect> newRects;
+                    float halfSize = r.size / 2.0f;
+                    float offsets[4][2] = { {-halfSize / 2, -halfSize / 2},
+                                            { halfSize / 2, -halfSize / 2},
+                                            {-halfSize / 2,  halfSize / 2},
+                                            { halfSize / 2,  halfSize / 2} };
+
+                    for (int j = 0; j < 4; j++) {
+                        Rect copy = r;
+                        copy.cx = r.cx + offsets[j][0];
+                        copy.cy = r.cy + offsets[j][1];
+                        copy.size = halfSize;
+                        copy.vx = 0; copy.vy = 3;
+                        copy.AnimationActive = true;
+                        newRects.push_back(copy);
+                    }
+                    rects.erase(rects.begin() + i);
+                    rects.insert(rects.end(), newRects.begin(), newRects.end());
                 }
                 else if (mode == 4) {
+                    vector<Rect> newRects;
+                    float halfSize = r.size / 2.0f;
+
+                    float dirs[8][2] = { {3,0},{-3,0},{0,3},{0,-3},
+                                         {3,3},{-3,3},{3,-3},{-3,-3} };
+
+                    for (int j = 0; j < 8; j++) {
+                        Rect copy = r;
+                        copy.size = halfSize;
+                        copy.vx = dirs[j][0];
+                        copy.vy = dirs[j][1];
+                        copy.AnimationActive = true;
+                        newRects.push_back(copy);
+                    }
+                    rects.erase(rects.begin() + i);
+                    rects.insert(rects.end(), newRects.begin(), newRects.end());
 				}
                 break;
             }
@@ -146,7 +219,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 }
 
 GLvoid Timer(int value) {
-    for (int i = 0; i < rects.size(); i++) {
+    for (int i = 0; i < rects.size();) {
         Rect& r = rects[i];
         if (r.AnimationActive) {
             r.cx += r.vx;
@@ -171,9 +244,11 @@ GLvoid InitRects(int winW, int winH)
     for (int i = 0; i < count; i++)
     {
         Rect newRect;
+        newRect.size = (float)(rand() % 30 + 20);
+        float half = newRect.size / 2.0f;
 
-        newRect.cx= rand() % winW;
-        newRect.cy = rand() % winH;
+        newRect.cx= rand() % (winW - (int)newRect.size) +half;
+        newRect.cy = rand() % (winH - (int)newRect.size) + half;
 		newRect.size = (float)(rand() % 30 + 20); //20~50
         newRect.r = (float)(rand() % 100) / 100.0f;
         newRect.g = (float)(rand() % 100) / 100.0f;
