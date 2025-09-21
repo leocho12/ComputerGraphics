@@ -30,35 +30,43 @@ GLvoid Motion(int x, int y);
 float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
 int selectedRectIndex = -1; // 선택된 사각형 인덱스
 int prevMouseX = -1, prevMouseY = -1; // 이전 마우스 위치
+const float RECTSIZE = 30.0f;
 bool isOverlap(const Rect& r1, const Rect& r2) {
     return !(r1.x2 < r2.x1 || r1.x1 > r2.x2 || r1.y2 < r2.y1 || r1.y1 > r2.y2);
 }
+Rect eraser;
+bool hasEraser = false;
+float eraserSize = RECTSIZE * 2;
+int erasedCount = 0;
 
 
 //윈도우 출력하고 콜백함수 설정
 void main(int argc, char** argv)
 {
-    //--- 윈도우 생성
-    glutInit(&argc, argv); //--- glut 초기화
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //--- 디스플레이 모드 설정
-    glutInitWindowPosition(0, 0); //--- 윈도우의 위치 지정
-    glutInitWindowSize(800, 600); //--- 윈도우의 크기 지정
-    glutCreateWindow("Example1"); //--- 윈도우 생성(윈도우 이름)
-    //--- GLEW 초기화
+    //윈도우 생성
+    glutInit(&argc, argv); //glut 초기화
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //디스플레이 모드 설정
+    glutInitWindowPosition(0, 0); //윈도우의 위치 지정
+    glutInitWindowSize(800, 600); //윈도우의 크기 지정
+    glutCreateWindow("Example1"); //윈도우 생성(윈도우 이름)
+    //GLEW 초기화
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) //--- glew 초기화 
+    if (glewInit() != GLEW_OK) //glew 초기화 
     {
         std::cerr << "Unable to initialize GLEW" << std::endl;
         exit(EXIT_FAILURE);
     }
     else
         std::cout << "GLEW Initialized\n";
-    glutDisplayFunc(drawScene); //--- 출력 콜백함수의 지정
-    glutReshapeFunc(Reshape); //--- 다시 그리기 콜백함수 지정
-    glutKeyboardFunc(Keyboard); //--- 키보드 입력 콜백함수 지정
-    glutMouseFunc(Mouse);     // 클릭/해제 이벤트
-    glutMotionFunc(Motion);   // 드래그 이벤트
-    glutMainLoop(); //--- 이벤트 처리 시작
+
+	InitRects(800, 600);
+
+    glutDisplayFunc(drawScene); //출력 콜백함수의 지정
+    glutReshapeFunc(Reshape); //다시 그리기 콜백함수 지정
+    glutKeyboardFunc(Keyboard); //키보드 입력 콜백함수 지정
+    glutMouseFunc(Mouse);     //클릭/해제 이벤트
+    glutMotionFunc(Motion);   //드래그 이벤트
+    glutMainLoop(); //이벤트 처리 시작
 
 
 }
@@ -79,12 +87,15 @@ void DrawRect(const Rect& rect)
 GLvoid drawScene()
 {
     // 변경된 배경색 설정
-    glClearColor(Bgcolor[0], Bgcolor[1], Bgcolor[2], 1.0f);//--- 바탕색을 변경
+    glClearColor(Bgcolor[0], Bgcolor[1], Bgcolor[2], 1.0f);//바탕색 변경
     glClear(GL_COLOR_BUFFER_BIT); //설정된 색으로 전체를 칠하기
 
     for (const auto& r : rects) {
         DrawRect(r);
     }
+
+    if(hasEraser)
+		DrawRect(eraser);
 
     glutSwapBuffers(); //화면에 출력
 }
@@ -103,36 +114,12 @@ GLvoid Reshape(int w, int h)
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-    case 'a':AddRandomRect(800, 600); break;
+    case 'r':InitRects(800,600); break;
     case 'q':exit(0); break; //프로그램 종료
     }
     glutPostRedisplay(); //배경색이 바뀔 때마다 출력 콜백 함수를 호출하여 화면을 refresh 한다
 }
 
-GLvoid AddRandomRect(int winW, int winH)
-{
-    Rect newRect;
-
-    float w = rand() % 100 + 20; //사각형의 너비
-    float h = rand() % 100 + 20; //사각형의 높이
-
-    //위치
-    newRect.x1 = rand() % (winW - (int)w);
-    newRect.y1 = rand() % (winH - (int)h);
-    newRect.x2 = newRect.x1 + w;
-    newRect.y2 = newRect.y1 + h;
-
-    //색상
-    newRect.r = (float)(rand() % 100) / 100.0f;
-    newRect.g = (float)(rand() % 100) / 100.0f;
-    newRect.b = (float)(rand() % 100) / 100.0f;
-
-    newRect.isSelected = false;
-
-    //30개 개수제한
-    if (rects.size() < 30)
-        rects.push_back(newRect);
-}
 
 //마우스 클릭
 GLvoid Mouse(int button, int state, int x, int y)
@@ -140,130 +127,58 @@ GLvoid Mouse(int button, int state, int x, int y)
     int winH = glutGet(GLUT_WINDOW_HEIGHT);
     int mouseY = winH - y; //OpenGL 좌표계로 변환
 
-    // 왼쪽 버튼: 선택 & 합치기
+    //좌클릭-지우개 생성
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        selectedRectIndex = -1;
-        for (int i = rects.size() - 1; i >= 0; i--) { // 뒤에서부터 검사 → 위에 있는 사각형 우선
-            Rect& r = rects[i];
-            if (x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
-                selectedRectIndex = i;
-                r.isSelected = true;
-                prevMouseX = x;
-                prevMouseY = mouseY;
+        if(!hasEraser){
+			eraserSize = RECTSIZE * 2;
+			eraser.x1 = x - eraserSize / 2;
+			eraser.y1 = mouseY - eraserSize / 2;
+			eraser.x2 = x + eraserSize / 2;
+			eraser.y2 = mouseY + eraserSize / 2;
+            eraser.r = 0.0f; 
+            eraser.g = 0.0f; 
+            eraser.b = 0.0f;
+            eraser.isSelected = true;
+            hasEraser = true;
 
-                // 선택된 사각형을 맨 뒤로 이동 (항상 위에 보이도록)
-                Rect picked = r;
-                rects.erase(rects.begin() + i);
-                rects.push_back(picked);
-                selectedRectIndex = rects.size() - 1;
+			prevMouseX = x;
+			prevMouseY = mouseY;
 
-                break;
-            }
-            else {
-                r.isSelected = false;
-            }
         }
     }
-    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-        if (selectedRectIndex != -1) {
-            Rect moved = rects[selectedRectIndex];
+    else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP){
+        hasEraser = false;
+	}
+	//우클릭-사각형 생성
+    else if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		if(erasedCount>0)
+        {
+            Rect newRect;
+            newRect.x1 = x - RECTSIZE / 2;
+            newRect.y1 = mouseY - RECTSIZE / 2;
+            newRect.x2 = x + RECTSIZE/2;
+            newRect.y2 = mouseY + RECTSIZE/2;
+            newRect.r = (float)(rand() % 100) / 100.0f;
+            newRect.g = (float)(rand() % 100) / 100.0f;
+            newRect.b = (float)(rand() % 100) / 100.0f;
+            newRect.isSelected = false;
 
-            // 다른 사각형과 겹치는지 확인 → 합치기
-            for (int i = 0; i < rects.size(); i++) {
-                if (i == selectedRectIndex) continue;
-                if (!(moved.x2 < rects[i].x1 || moved.x1 > rects[i].x2 ||
-                    moved.y2 < rects[i].y1 || moved.y1 > rects[i].y2)) {
-                    // 겹침 → 합치기
-                    Rect merged;
-                    merged.x1 = min(moved.x1, rects[i].x1);
-                    merged.y1 = min(moved.y1, rects[i].y1);
-                    merged.x2 = max(moved.x2, rects[i].x2);
-                    merged.y2 = max(moved.y2, rects[i].y2);
-                    merged.r = (float)(rand() % 100) / 100.0f;
-                    merged.g = (float)(rand() % 100) / 100.0f;
-                    merged.b = (float)(rand() % 100) / 100.0f;
-                    merged.isSelected = false;
+            rects.push_back(newRect);
+			erasedCount--;
 
-                    // 기존 두 사각형 삭제
-                    if (i > selectedRectIndex) {
-                        rects.erase(rects.begin() + i);
-                        rects.erase(rects.begin() + selectedRectIndex);
-                    }
-                    else {
-                        rects.erase(rects.begin() + selectedRectIndex);
-                        rects.erase(rects.begin() + i);
-                    }
+            if (eraserSize > RECTSIZE * 2) {
+                eraserSize -= RECTSIZE * 0.5f;
 
-                    // 합쳐진 사각형 추가
-                    rects.push_back(merged);
-                    break;
-                }
+                // 지우개 중심 유지하며 크기 재설정
+                float cx = (eraser.x1 + eraser.x2) / 2.0f;
+                float cy = (eraser.y1 + eraser.y2) / 2.0f;
+                eraser.x1 = cx - eraserSize / 2;
+                eraser.y1 = cy - eraserSize / 2;
+                eraser.x2 = cx + eraserSize / 2;
+                eraser.y2 = cy + eraserSize / 2;
             }
         }
-
-        // 드래그 종료
-        selectedRectIndex = -1;
-        prevMouseX = -1;
-        prevMouseY = -1;
-        for (auto& r : rects) r.isSelected = false;
-    }
-
-    // 오른쪽 버튼: 분리하기
-    else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-        int targetIndex = -1;
-        for (int i = rects.size() - 1; i >= 0; i--) {
-            const Rect& r = rects[i];
-            if (x >= r.x1 && x <= r.x2 && mouseY >= r.y1 && mouseY <= r.y2) {
-                targetIndex = i;
-                break;
-            }
-        }
-
-        if (targetIndex != -1) {
-            Rect target = rects[targetIndex];
-            rects.erase(rects.begin() + targetIndex);
-
-            // 분리 (가로 또는 세로 랜덤)
-            bool splitVertically = rand() % 2;
-            if (splitVertically) {
-                float midX = (target.x1 + target.x2) / 2.0f;
-
-                Rect left = { target.x1, target.y1, midX, target.y2,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    false };
-
-                Rect right = { midX, target.y1, target.x2, target.y2,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    false };
-
-                if (rects.size() < 30) rects.push_back(left);
-                if (rects.size() < 30) rects.push_back(right);
-            }
-            else {
-                float midY = (target.y1 + target.y2) / 2.0f;
-
-                Rect bottom = { target.x1, target.y1, target.x2, midY,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    false };
-
-                Rect top = { target.x1, midY, target.x2, target.y2,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    (float)(rand() % 100) / 100.0f,
-                    false };
-
-                if (rects.size() < 30) rects.push_back(bottom);
-                if (rects.size() < 30) rects.push_back(top);
-            }
-        }
-    }
-
+	}
     glutPostRedisplay();
 }
 
@@ -271,89 +186,68 @@ GLvoid InitRects(int winW, int winH)
 {
 	rects.clear();//clear window
     int count = rand() % 21 + 20;//20~40
+
     for (int i = 0; i < count; i++)
     {
 		Rect newRect;
-        float w = rand() % 21 + 20;
-		float h = rand() % 21 + 20;
-        newRect.x1 = rand() % (winW - (int)w);
-        newRect.y1 = rand() % (winH - (int)h);
-        newRect.x2 = newRect.x1 + w;
-        newRect.y2 = newRect.y1 + h;
+
+        newRect.x1 = rand() % (winW - (int)RECTSIZE);
+        newRect.y1 = rand() % (winH - (int)RECTSIZE);
+        newRect.x2 = newRect.x1 + RECTSIZE;
+        newRect.y2 = newRect.y1 + RECTSIZE;
         newRect.r = (float)(rand() % 100) / 100.0f;
         newRect.g = (float)(rand() % 100) / 100.0f;
         newRect.b = (float)(rand() % 100) / 100.0f;
         newRect.isSelected = false;
-        //겹치는지 확인
-        bool overlap = false;
-        for (const auto& r : rects) {
-            if (isOverlap(newRect, r)) {
-                overlap = true;
-                break;
-            }
-        }
-        if (!overlap)
-			rects.push_back(newRect);
+        
+        rects.push_back(newRect);
     }
     return GLvoid();
 }
 
 //마우스 드래그 처리
 GLvoid Motion(int x, int y) {
-    if (selectedRectIndex != -1) {
+    if (hasEraser) {
         int winH = glutGet(GLUT_WINDOW_HEIGHT);
         int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
         int dx = x - prevMouseX;
         int dy = mouseY - prevMouseY;
-        Rect& r = rects[selectedRectIndex];
-        r.x1 += dx;
-        r.x2 += dx;
-        r.y1 += dy;
-        r.y2 += dy;
+
+        //지우개 이동
+		eraser.x1 += dx;
+		eraser.x2 += dx;
+		eraser.y1 += dy;
+		eraser.y2 += dy;
+
+        //지우기
+        for (int i = 0; i < rects.size();) {
+            if (isOverlap(eraser, rects[i])) {
+                //지운 개수 증가
+                erasedCount++;
+
+                //지우개 크기 증가 
+                eraserSize += RECTSIZE * 0.5f;
+                float cx = (eraser.x1 + eraser.x2) / 2.0f;
+                float cy = (eraser.y1 + eraser.y2) / 2.0f;
+                eraser.x1 = cx - eraserSize / 2;
+                eraser.y1 = cy - eraserSize / 2;
+                eraser.x2 = cx + eraserSize / 2;
+                eraser.y2 = cy + eraserSize / 2;
+
+                eraser.r = rects[i].r;
+                eraser.g = rects[i].g;
+                eraser.b = rects[i].b;
+
+                rects.erase(rects.begin() + i);
+            }
+            else {
+                i++;
+            }
+        }
+        
         prevMouseX = x;
         prevMouseY = mouseY;
+
         glutPostRedisplay();
     }
-}
-
-Rect mergeRect(const Rect& r1, const Rect& r2)
-{
-    Rect merged;
-
-    merged.x1 = min(r1.x1, r2.x1);
-    merged.y1 = min(r1.y1, r2.y1);
-    merged.x2 = max(r1.x2, r2.x2);
-    merged.y2 = max(r1.y2, r2.y2);
-
-    merged.r = (float)(rand() % 100) / 100.0f;
-    merged.g = (float)(rand() % 100) / 100.0f;
-    merged.b = (float)(rand() % 100) / 100.0f;
-    merged.isSelected = false;
-
-    return merged;
-}
-
-vector<Rect> splitRect(const Rect& r)
-{
-    vector<Rect> result;
-    bool splitvertically = rand() % 2;
-
-    if (splitvertically) {
-        float midX = (r.x1 + r.x2) / 2.0f;
-
-        Rect r1 = { r.x1, r.y1, midX, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        Rect r2 = { midX, r.y1, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        result.push_back(r1);
-        result.push_back(r2);
-
-    }
-    else {
-        float midY = (r.y1 + r.y2) / 2.0f;
-
-        Rect r3 = { r.x1, r.y1, r.x2, midY, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        Rect r4 = { r.x1, midY, r.x2, r.y2, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, (float)(rand() % 100) / 100.0f, false };
-        result.push_back(r3);
-        result.push_back(r4);
-    }
-    return result;
 }
