@@ -1,19 +1,24 @@
 #include <iostream>
-#include<vector>
+#include <vector>
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
 
 using namespace std;
 
-// 사각형 구조체
+//사각형 구조체
 struct Rect {
-    float x1, y1, x2, y2; // 사각형 좌표
-    float r, g, b;        // 색상 저장
-    bool isSelected = false; // 선택 여부
+    float cx,cy; //사각형 중심 좌표
+    float r, g, b;        //색상 저장
+	float vx = 0, vy = 0; //속도
+    float size;           //크기
+	bool AnimationActive = false;//애니메이션 활성화 여부
 };
 
-// 사각형 컨테이너
+//Global 변수
+float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //배경색 저장
+int mode = 1;
+//사각형 컨테이너
 vector<Rect> rects;
 
 //함수선언
@@ -22,22 +27,7 @@ GLvoid Reshape(int w, int h);
 GLvoid InitRects(int winW, int winH);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
-GLvoid Motion(int x, int y);
 
-
-
-//변수선언
-float Bgcolor[3] = { 1.0f, 1.0f, 1.0f }; //--- 배경색 저장
-int selectedRectIndex = -1; // 선택된 사각형 인덱스
-int prevMouseX = -1, prevMouseY = -1; // 이전 마우스 위치
-const float RECTSIZE = 30.0f;
-bool isOverlap(const Rect& r1, const Rect& r2) {
-    return !(r1.x2 < r2.x1 || r1.x1 > r2.x2 || r1.y2 < r2.y1 || r1.y1 > r2.y2);
-}
-Rect eraser;
-bool hasEraser = false;
-float eraserSize = RECTSIZE * 2;
-int erasedCount = 0;
 
 
 //윈도우 출력하고 콜백함수 설정
@@ -48,7 +38,7 @@ void main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //디스플레이 모드 설정
     glutInitWindowPosition(0, 0); //윈도우의 위치 지정
     glutInitWindowSize(800, 600); //윈도우의 크기 지정
-    glutCreateWindow("Example1"); //윈도우 생성(윈도우 이름)
+    glutCreateWindow("Example6"); //윈도우 생성(윈도우 이름)
     //GLEW 초기화
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) //glew 초기화 
@@ -64,8 +54,8 @@ void main(int argc, char** argv)
     glutDisplayFunc(drawScene); //출력 콜백함수의 지정
     glutReshapeFunc(Reshape); //다시 그리기 콜백함수 지정
     glutKeyboardFunc(Keyboard); //키보드 입력 콜백함수 지정
-    glutMouseFunc(Mouse);     //클릭/해제 이벤트
-    glutMotionFunc(Motion);   //드래그 이벤트
+    glutMouseFunc(Mouse); //클릭/해제 이벤트
+	glutTimerFunc(16, Timer, 0); //타이머 이벤트
     glutMainLoop(); //이벤트 처리 시작
 
 
@@ -75,11 +65,12 @@ void main(int argc, char** argv)
 void DrawRect(const Rect& rect)
 {
     glColor3f(rect.r, rect.g, rect.b);
+	float half = rect.size / 2.0f;
     glBegin(GL_QUADS);
-    glVertex2f(rect.x1, rect.y1);
-    glVertex2f(rect.x2, rect.y1);
-    glVertex2f(rect.x2, rect.y2);
-    glVertex2f(rect.x1, rect.y2);
+    glVertex2f(rect.cx - half, rect.cy - half);
+    glVertex2f(rect.cx + half, rect.cy - half);
+    glVertex2f(rect.cx + half, rect.cy + half);
+    glVertex2f(rect.cx - half, rect.cy + half);
     glEnd();
 }
 
@@ -94,8 +85,7 @@ GLvoid drawScene()
         DrawRect(r);
     }
 
-    if (hasEraser)
-        DrawRect(eraser);
+   
 
     glutSwapBuffers(); //화면에 출력
 }
@@ -114,7 +104,11 @@ GLvoid Reshape(int w, int h)
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-    case 'r':InitRects(800, 600); break;
+    case'1':mode = 1; break;//좌우상하
+    case'2':mode = 1; break;//대각선
+    case'3':mode = 1; break;//그룹
+    case'4':mode = 1; break;//8방향
+    case 'r':InitRects(800, 600); break;//종료
     case 'q':exit(0); break; //프로그램 종료
     }
     glutPostRedisplay(); //배경색이 바뀔 때마다 출력 콜백 함수를 호출하여 화면을 refresh 한다
@@ -129,125 +123,66 @@ GLvoid Mouse(int button, int state, int x, int y)
 
     //좌클릭-지우개 생성
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        if (!hasEraser) {
-            eraserSize = RECTSIZE * 2;
-            eraser.x1 = x - eraserSize / 2;
-            eraser.y1 = mouseY - eraserSize / 2;
-            eraser.x2 = x + eraserSize / 2;
-            eraser.y2 = mouseY + eraserSize / 2;
-            eraser.r = 0.0f;
-            eraser.g = 0.0f;
-            eraser.b = 0.0f;
-            eraser.isSelected = true;
-            hasEraser = true;
+        for (int i = 0; i < rects.size(); i++) {
+			Rect& r = rects[i];
+			float half = r.size / 2.0f;
+            if (mouseY >= r.cy - half && mouseY <= r.cy + half && x >= r.cx - half && x <= r.cx + half) {
+                if (mode == 1) {
 
-            prevMouseX = x;
-            prevMouseY = mouseY;
-
-        }
-    }
-    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-        hasEraser = false;
-    }
-    //우클릭-사각형 생성
-    else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-        if (erasedCount > 0)
-        {
-            Rect newRect;
-            newRect.x1 = x - RECTSIZE / 2;
-            newRect.y1 = mouseY - RECTSIZE / 2;
-            newRect.x2 = x + RECTSIZE / 2;
-            newRect.y2 = mouseY + RECTSIZE / 2;
-            newRect.r = (float)(rand() % 100) / 100.0f;
-            newRect.g = (float)(rand() % 100) / 100.0f;
-            newRect.b = (float)(rand() % 100) / 100.0f;
-            newRect.isSelected = false;
-
-            rects.push_back(newRect);
-            erasedCount--;
-
-            if (eraserSize > RECTSIZE * 2) {
-                eraserSize -= RECTSIZE * 0.5f;
-
-                // 지우개 중심 유지하며 크기 재설정
-                float cx = (eraser.x1 + eraser.x2) / 2.0f;
-                float cy = (eraser.y1 + eraser.y2) / 2.0f;
-                eraser.x1 = cx - eraserSize / 2;
-                eraser.y1 = cy - eraserSize / 2;
-                eraser.x2 = cx + eraserSize / 2;
-                eraser.y2 = cy + eraserSize / 2;
+                }
+                else if(mode == 2) {
+                }
+                else if (mode == 3) {
+                }
+                else if (mode == 4) {
+				}
+                break;
             }
         }
+        
+    }
+    
+    glutPostRedisplay();
+}
+
+GLvoid Timer(int value) {
+    for (int i = 0; i < rects.size(); i++) {
+        Rect& r = rects[i];
+        if (r.AnimationActive) {
+            r.cx += r.vx;
+            r.cy += r.vy;
+            r.size -= 0.2f;//축소
+            if (r.size < 5) {
+                rects.erase(rects.begin() + i);
+                continue;
+            }
+        }
+        i++;
     }
     glutPostRedisplay();
+    glutTimerFunc(16, Timer, 0);
 }
 
 GLvoid InitRects(int winW, int winH)
 {
     rects.clear();//clear window
-    int count = rand() % 21 + 20;//20~40
+    int count = rand() % 6 + 5;//5~10
 
     for (int i = 0; i < count; i++)
     {
         Rect newRect;
 
-        newRect.x1 = rand() % (winW - (int)RECTSIZE);
-        newRect.y1 = rand() % (winH - (int)RECTSIZE);
-        newRect.x2 = newRect.x1 + RECTSIZE;
-        newRect.y2 = newRect.y1 + RECTSIZE;
+        newRect.cx= rand() % winW;
+        newRect.cy = rand() % winH;
+		newRect.size = (float)(rand() % 30 + 20); //20~50
         newRect.r = (float)(rand() % 100) / 100.0f;
         newRect.g = (float)(rand() % 100) / 100.0f;
         newRect.b = (float)(rand() % 100) / 100.0f;
-        newRect.isSelected = false;
+        newRect.AnimationActive = false;
+        newRect.vx = 0;
+        newRect.vy = 0;
 
         rects.push_back(newRect);
     }
     return GLvoid();
-}
-
-//마우스 드래그 처리
-GLvoid Motion(int x, int y) {
-    if (hasEraser) {
-        int winH = glutGet(GLUT_WINDOW_HEIGHT);
-        int mouseY = winH - y; // OpenGL 좌표계에 맞게 변환
-        int dx = x - prevMouseX;
-        int dy = mouseY - prevMouseY;
-
-        //지우개 이동
-        eraser.x1 += dx;
-        eraser.x2 += dx;
-        eraser.y1 += dy;
-        eraser.y2 += dy;
-
-        //지우기
-        for (int i = 0; i < rects.size();) {
-            if (isOverlap(eraser, rects[i])) {
-                //지운 개수 증가
-                erasedCount++;
-
-                //지우개 크기 증가 
-                eraserSize += RECTSIZE * 0.5f;
-                float cx = (eraser.x1 + eraser.x2) / 2.0f;
-                float cy = (eraser.y1 + eraser.y2) / 2.0f;
-                eraser.x1 = cx - eraserSize / 2;
-                eraser.y1 = cy - eraserSize / 2;
-                eraser.x2 = cx + eraserSize / 2;
-                eraser.y2 = cy + eraserSize / 2;
-
-                eraser.r = rects[i].r;
-                eraser.g = rects[i].g;
-                eraser.b = rects[i].b;
-
-                rects.erase(rects.begin() + i);
-            }
-            else {
-                i++;
-            }
-        }
-
-        prevMouseX = x;
-        prevMouseY = mouseY;
-
-        glutPostRedisplay();
-    }
 }
