@@ -288,7 +288,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
         break;
     }
 
-    case 's':for (auto& t : rects) { t.aniPos1 = t.aniSize = t.aniColor = false; }; break;
+    case 's':for (auto& t : rects) { t.aniPos2 = t.aniPos1 = t.aniSize = t.aniColor = false; }; break;
     case 'm':for (auto& t : rects) {
         float w = t.x2 - t.x1;
         float h = t.y2 - t.y1;

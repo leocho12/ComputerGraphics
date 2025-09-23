@@ -122,7 +122,6 @@ GLvoid Mouse(int button, int state, int x, int y)
     int winH = glutGet(GLUT_WINDOW_HEIGHT);
     int mouseY = winH - y; //OpenGL 좌표계로 변환
 
-    //좌클릭-지우개 생성
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         for (int i = 0; i < rects.size(); i++) {
 			Rect& r = rects[i];
