@@ -1,25 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\",
+  "WorkspaceRootPath": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup6.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{37863599-A24F-4BDF-A566-B05AF1A63E41}|CG\\CG.vcxproj|solutionrelative:CG\\warmup3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 302,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,24 +42,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "warmup5.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp",
               "RelativeDocumentMoniker": "CG\\warmup5.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup5.cpp",
               "RelativeToolTip": "CG\\warmup5.cpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABoAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-09-10T02:35:25.647Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "warmup2.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
               "RelativeDocumentMoniker": "CG\\warmup2.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup2.cpp",
               "RelativeToolTip": "CG\\warmup2.cpp",
               "ViewState": "AgIAABIAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -67,11 +67,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "warmup4.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
               "RelativeDocumentMoniker": "CG\\warmup4.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup4.cpp",
               "RelativeToolTip": "CG\\warmup4.cpp",
               "ViewState": "AgIAADMAAAAAAAAAAAAAAD8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -79,23 +79,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "warmup6.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp",
               "RelativeDocumentMoniker": "CG\\warmup6.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup6.cpp",
               "RelativeToolTip": "CG\\warmup6.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-09-09T04:26:46.125Z"
+              "WhenOpened": "2025-09-09T04:26:46.125Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "warmup3.cpp",
-              "DocumentMoniker": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
+              "DocumentMoniker": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
               "RelativeDocumentMoniker": "CG\\warmup3.cpp",
-              "ToolTip": "C:\\Users\\leoch\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
+              "ToolTip": "C:\\Users\\Leo Cho\\Documents\\GitHub\\ComputerGraphics\\CG\\CG\\warmup3.cpp",
               "RelativeToolTip": "CG\\warmup3.cpp",
               "ViewState": "AgIAAKsAAAAAAAAAAAAAAFYAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
