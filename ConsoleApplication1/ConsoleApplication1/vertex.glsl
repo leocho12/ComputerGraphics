@@ -1,9 +1,5 @@
-#version 330 core
-void main()
-{
-	const vec4 vertex[4] = vec4[4] (vec4(-0.25, -0.25, 0.5, 1.0),
-			   vec4(0.25, -0.25, 0.5, 1.0),
-			   vec4(0.0, 0.25, 0.5, 1.0),
-			   vec4(0.0, -0.5, 0.5, 1.0));
-	gl_Position = vertex [gl_VertexID];
+#version 330 compatibility
+layout(location = 0) in vec2 aPos;   // glVertex2f가 넘기는 위치(일반적으로 0번 속성)
+void main() {
+    gl_Position = vec4(aPos, 0.0, 1.0);
 }
