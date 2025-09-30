@@ -26,17 +26,14 @@ GLuint fragmentShader; //--- 프래그먼트 세이더 객체
 GLuint VAO;//VBO담는 용도
 GLuint VBO;//정점 데이터를 GPU에 넘겨줄 버퍼공간(포인터/암튼 주소 갖고있음) 
 
-enum Shapes { Point, Line, Tri, Rect };
 struct Shape {
-	Shapes type;
+	bool fullcheck = false;
 	float x, y;//중심좌표
 	float size;//크기
 	float r, g, b;//색상
 };
 vector<Shape> shapes;
-int selected = -1;//도형 선택여부
-Shapes Mode = Point;//도형 종류
-
+bool isfull = false;
 char* filetobuf(const char* file)
 {
 	FILE* fptr;
@@ -65,7 +62,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(width, height);
-	glutCreateWindow("Example1");
+	glutCreateWindow("Drill9");
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -157,104 +154,44 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	for (auto& s : shapes) {
 		glColor3f(s.r, s.g, s.b);
 
-		switch (s.type) {
-		case Point:
-			glPointSize(5.0f);
-			glBegin(GL_POINTS);
-			glVertex2f(s.x, s.y);
-			glEnd();
-			break;
-		case Line:
-			glBegin(GL_LINES);
-			glVertex2f(s.x - s.size, s.y);
-			glVertex2f(s.x + s.size, s.y);
-			glEnd();
-			break;
-		case Tri:
-			glBegin(GL_TRIANGLES);
-			glVertex2f(s.x, s.y + s.size);
-			glVertex2f(s.x - s.size, s.y - s.size);
-			glVertex2f(s.x + s.size, s.y - s.size);
-			glEnd();
-			break;
-		case Rect:
-			glBegin(GL_TRIANGLES);
-			// 첫 번째 삼각형 (좌상, 좌하, 우상)
-			glVertex2f(s.x - s.size, s.y + s.size); // 좌상
-			glVertex2f(s.x - s.size, s.y - s.size); // 좌하
-			glVertex2f(s.x + s.size, s.y + s.size); // 우상
-
-			// 두 번째 삼각형 (우상, 좌하, 우하)
-			glVertex2f(s.x + s.size, s.y + s.size); // 우상
-			glVertex2f(s.x - s.size, s.y - s.size); // 좌하
-			glVertex2f(s.x + s.size, s.y - s.size); // 우하
-			glEnd();
-			break;
-		}
+		
+		
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
 }
 GLvoid keyboard(unsigned char key, int x, int y) {
 	switch (key) {
-	case 'p':Mode = Point; break;
-	case 'l':Mode = Line; break;
-	case 't':Mode = Tri; break;
-	case 'r':Mode = Rect; break;
-	case'c':
-		shapes.clear();
-		selected = -1;
+	case 'a':
+		isfull = true;
 		break;
-	case 'w': if (selected != -1)shapes[selected].y += 0.05f; break;
-	case 's': if (selected != -1)shapes[selected].y -= 0.05f; break;
-	case 'a': if (selected != -1)shapes[selected].x -= 0.05f; break;
-	case 'd': if (selected != -1)shapes[selected].x += 0.05f; break;
-	case 'u': //좌상
-		if (selected != -1) {
-			shapes[selected].x -= 0.05f;
-			shapes[selected].y += 0.05f;
-		}
+	case 'b':
+		isfull = false;
 		break;
-	case 'j': //좌하
-		if (selected != -1) {
-			shapes[selected].x -= 0.05f;
-			shapes[selected].y -= 0.05f;
-		}
+	case 'c':
 		break;
-	case 'k': //우하
-		if (selected != -1) {
-			shapes[selected].x += 0.05f;
-			shapes[selected].y -= 0.05f;
-		}
-		break;
-	case 'i': //우상
-		if (selected != -1) {
-			shapes[selected].x += 0.05f;
-			shapes[selected].y += 0.05f;
-		}
+	case 'q':
+		return;
 		break;
 	}
 	glutPostRedisplay();
 }
 
 GLvoid mouse(int button, int state, int x, int y) {
+	//좌클릭
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//화면 좌표->OpenGL 좌표 변환
 		float nx = (float)x / width * 2.0f - 1.0f;
 		float ny = 1.0f - (float)y / height * 2.0f;
 
-		selected = -1;
-		for (int i = 0; i < shapes.size(); i++) {
-			float dx = nx - shapes[i].x;
-			float dy = ny - shapes[i].y;
-			if (dx * dx + dy * dy < shapes[i].size * shapes[i].size) {
-				selected = i;
-				break;
-			}
-		}
-		if (selected == -1 && shapes.size() < 10) {
-			shapes.push_back({ Mode,nx,ny,0.1f,(float)rand() / RAND_MAX,(float)rand() / RAND_MAX,(float)rand() / RAND_MAX });
-		}
+	}
+	//우클릭
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		//화면 좌표->OpenGL 좌표 변환
+		float nx = (float)x / width * 2.0f - 1.0f;
+		float ny = 1.0f - (float)y / height * 2.0f;
+
+
 	}
 	glutPostRedisplay();
 }
