@@ -7,7 +7,7 @@ void main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("Example7");
+	glutCreateWindow("Example10");
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
