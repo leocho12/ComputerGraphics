@@ -50,13 +50,6 @@ public:
 	}
 };
 
-bool frame = false;
-bool Start = false;
-
-float size1 = 1.0, size2 = 1.0, size3 = 1.0, size4 = 1.0;
-
-int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
-
 Shape shape[4];
 
 void main(int argc, char** argv)
@@ -65,7 +58,7 @@ void main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("Example10");
+	glutCreateWindow("Example11");
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)

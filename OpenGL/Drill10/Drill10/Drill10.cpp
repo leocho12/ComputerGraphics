@@ -1,5 +1,7 @@
 ﻿#include "GLmain.h"
 
+//각종함수들 작성공간
+
 bool states1 = false;
 bool states2 = false;
 bool states3 = false;
@@ -147,7 +149,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[0].shapecoord[2][0] = fx + (0.1 * shape[0].size);
 			shape[0].shapecoord[2][1] = fy - (0.3 * shape[0].size);
 			shape[0].Colors();
-			shape[0].size += 0.1;
+			shape[0].size = rand() % 3 + 1;
 		}
 		else if (1 > fx && 0 < fx && 1 > fy && 0 < fy)
 		{
@@ -158,7 +160,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[1].shapecoord[2][0] = fx + (0.1 * shape[1].size);
 			shape[1].shapecoord[2][1] = fy - (0.3 * shape[1].size);
 			shape[1].Colors();
-			shape[1].size += 0.1;
+			shape[1].size = rand() % 3 + 1;
 		}
 		else if (-1 < fx && fx < 0 && -1 < fy && fy < 0)
 		{
@@ -169,7 +171,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[2].shapecoord[2][0] = fx + (0.1 * shape[2].size);
 			shape[2].shapecoord[2][1] = fy - (0.3 * shape[2].size);
 			shape[2].Colors();
-			shape[2].size += 0.1;
+			shape[2].size = rand() % 3 + 1;
 		}
 		else if (1 > fx && 0 < fx && -1 < fy && 0 > fy)
 		{
@@ -180,7 +182,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[3].shapecoord[2][0] = fx + (0.1 * shape[3].size);
 			shape[3].shapecoord[2][1] = fy - (0.3 * shape[3].size);
 			shape[3].Colors();
-			shape[3].size += 0.1;
+			shape[3].size = rand() % 3 + 1;
 		}
 	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
@@ -193,7 +195,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[0].shapecoord[1][1] = fy - 0.3;
 			shape[0].shapecoord[2][0] = fx + 0.1;
 			shape[0].shapecoord[2][1] = fy - 0.3;
-			shape[0].size = 1.0;
+			shape[0].size = rand() % 3 + 1;
 		}
 		else if (1 > fx && 0 < fx && 1 > fy && 0 < fy)
 		{
@@ -203,7 +205,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[1].shapecoord[1][1] = fy - 0.3;
 			shape[1].shapecoord[2][0] = fx + 0.1;
 			shape[1].shapecoord[2][1] = fy - 0.3;
-			shape[1].size = 1.0;
+			shape[1].size = rand() % 3 + 1;
 		}
 		else if (-1 < fx && fx < 0 && -1 < fy && fy < 0)
 		{
@@ -213,7 +215,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[2].shapecoord[1][1] = fy - 0.3;
 			shape[2].shapecoord[2][0] = fx + 0.1;
 			shape[2].shapecoord[2][1] = fy - 0.3;
-			shape[2].size = 1.0;
+			shape[2].size = rand() % 3 + 1;
 		}
 		else if (1 > fx && 0 < fx && -1 < fy && 0 > fy)
 		{
@@ -223,7 +225,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			shape[3].shapecoord[1][1] = fy - 0.3;
 			shape[3].shapecoord[2][0] = fx + 0.1;
 			shape[3].shapecoord[2][1] = fy - 0.3;
-			shape[3].size = 1.0;
+			shape[3].size = rand() % 3 + 1;
 		}
 	}
 	glutPostRedisplay();
@@ -301,16 +303,23 @@ GLvoid TimerFunction(int value)
 		}
 		else if (states2)
 		{
+			float dx, dy;
 			switch (shape[i].Way)
 			{
-			case 0:
-				moveTriangle(shape[i], 0.1, 0.0);
+			case 0://오른쪽
+				dx = 0.1f;
+				dy = 0.0f;
+				moveTriangle(shape[i], dx, dy);
 				break;
-			case 1:
-				moveTriangle(shape[i], -0.1, 0.0);
+			case 1://왼쪽
+				dx = -0.1f;
+				dy = 0.0f;
+				moveTriangle(shape[i], dx, dy);
 				break;
 			}
-			if (fabs(shape[i].shapecoord[0][0]) >= 1 && !shape[i].var)
+			
+			//위로이동
+			if (fabs(shape[i].shapecoord[0][0]) >= 1 && !shape[i].var)//fab 부동소수점 구하는 함수
 			{
 				shape[i].shapecoord[0][1] += 0.1;
 				shape[i].shapecoord[1][1] += 0.1;
@@ -318,6 +327,7 @@ GLvoid TimerFunction(int value)
 				shape[i].Way = (shape[i].Way + 1) % 2;
 				rotateTriangle(shape[i], 90);
 			}
+			//아래로이동
 			else if (fabs(shape[i].shapecoord[0][0]) >= 1 && shape[i].var)
 			{
 				shape[i].shapecoord[0][1] -= 0.1;
@@ -326,10 +336,12 @@ GLvoid TimerFunction(int value)
 				shape[i].Way = (shape[i].Way + 1) % 2;
 				rotateTriangle(shape[i], 90);
 			}
+			//위에 닿았을때
 			if (fabs(shape[i].shapecoord[0][0]) > 1 && shape[i].shapecoord[0][1] > 1 || fabs(shape[i].shapecoord[1][0]) > 1 && shape[i].shapecoord[1][1] > 1 || fabs(shape[i].shapecoord[2][0]) > 1 && shape[i].shapecoord[2][1] > 1)
 			{
 				shape[i].var = true;
 			}
+			//아래에 닿았을때
 			else if (fabs(shape[i].shapecoord[0][0]) > 1 && shape[i].shapecoord[0][1] < -1 || fabs(shape[i].shapecoord[1][0]) > 1 && shape[i].shapecoord[1][1] < -1 || fabs(shape[i].shapecoord[2][0]) > 1 && shape[i].shapecoord[2][1] < -1)
 			{
 				shape[i].var = false;

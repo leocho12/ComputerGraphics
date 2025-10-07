@@ -11,11 +11,8 @@
 
 //셰이더 연동관련
 
-GLfloat triShape[3][3]; //--- 삼각형 위치 값
-GLfloat colors[3][3]; //--- 삼각형 꼭지점 색상
 GLuint vao, vbo[2];
 GLvoid drawScene(GLvoid);
-GLvoid TimerFunction(int value);
 void convertXY(int x, int y, float& fx, float& fy);
 int random();
 void UpdateBuffer();
