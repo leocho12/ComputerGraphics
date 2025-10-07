@@ -1,16 +1,19 @@
 #pragma once
+#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
 #include <random>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 GLfloat triShape[3][3]; //--- 삼각형 위치 값
 GLfloat colors[3][3]; //--- 삼각형 꼭지점 색상
 GLuint vao, vbo[2];
 GLvoid drawScene(GLvoid);
+GLvoid TimerFunction(int value);
 void convertXY(int x, int y, float& fx, float& fy);
 int random();
 void UpdateBuffer();
@@ -29,6 +32,7 @@ GLuint shaderPID;
 GLvoid Reshape(int w, int h);
 #define WIDTH 800
 #define HEIGHT 600
+#define PI 3.14159265359
 
 void Color(float& color)
 {
