@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//¼ÎÀÌ´õ ¿¬µ¿°ü·Ã
-GLfloat triShape[3][3]; //--- »ï°¢Çü À§Ä¡ °ª
-GLfloat colors[3][3]; //--- »ï°¢Çü ²ÀÁöÁ¡ »ö»ó
-GLuint vao, vbo[2];
+//ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+GLfloat triShape[3][3]; //--- ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½
+GLfloat colors[3][3]; //--- ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+GLuint vao, vbo[2],ebo;
 GLvoid drawScene(GLvoid);
 GLvoid TimerFunction(int value);
 void convertXY(int x, int y, float& fx, float& fy);
@@ -20,13 +20,14 @@ int random();
 void UpdateBuffer();
 void Color(float& color);
 GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Motion(int x, int y);
 void InitBuffer();
 void make_vertexShaders();
 void make_fragmentShaders();
 void make_shaderProgram();
-GLchar* vertexSource, * fragmentSource; //--- ¼Ò½ºÄÚµå ÀúÀå º¯¼ö
-GLuint vertexShader, fragmentShader; //--- ¼¼ÀÌ´õ °´Ã¼
-GLuint shaderProgramID; //--- ¼ÎÀÌ´õ ÇÁ·Î±×·¥
+GLchar* vertexSource, * fragmentSource; //--- ï¿½Ò½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+GLuint vertexShader, fragmentShader; //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼
+GLuint shaderProgramID; //--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½
 GLvoid Keyboard(unsigned char key, int x, int y);
 float bGCr = 1.0, bGCg = 1.0, bGCb = 1.0;
 GLuint shaderPID;
@@ -34,6 +35,15 @@ GLvoid Reshape(int w, int h);
 #define WIDTH 800
 #define HEIGHT 600
 #define PI 3.14159265359
+
+// ì‹¤ìŠµ 13: ìµœëŒ€ ë„í˜• ê°œìˆ˜ì™€ ê¸°ë³¸ ê·œì¹™
+#define MAX_SHAPES 64
+
+// ì• ë‹ˆë©”ì´ì…˜ on/off
+extern bool animating;
+
+// ì´ˆê¸°í™”
+void ResetShapes();
 
 void Color(float& color)
 {
@@ -76,37 +86,37 @@ void convertXY(int x, int y, float& fx, float& fy)
 
 void make_shaderProgram()
 {
-	make_vertexShaders(); //--- ¹öÅØ½º ¼¼ÀÌ´õ ¸¸µé±â
-	make_fragmentShaders(); //--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ¸¸µé±â
+	make_vertexShaders(); //--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	make_fragmentShaders(); //--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	//-- shader Program
 	shaderProgramID = glCreateProgram();
 	glAttachShader(shaderProgramID, vertexShader);
 	glAttachShader(shaderProgramID, fragmentShader);
 	glLinkProgram(shaderProgramID);
-	//--- ¼¼ÀÌ´õ »èÁ¦ÇÏ±â
+	//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	//--- Shader Program »ç¿ëÇÏ±â
+	//--- Shader Program ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	glUseProgram(shaderProgramID);
 }
 
 void make_vertexShaders()
 {
 	vertexSource = filetobuf("vertex.glsl");
-	//--- ¹öÅØ½º ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
+	//--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	//--- ¼¼ÀÌ´õ ÄÚµå¸¦ ¼¼ÀÌ´õ °´Ã¼¿¡ ³Ö±â
+	//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ö±ï¿½
 	glShaderSource(vertexShader, 1, (const GLchar**)&vertexSource, 0);
-	//--- ¹öÅØ½º ¼¼ÀÌ´õ ÄÄÆÄÀÏÇÏ±â
+	//--- ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	glCompileShader(vertexShader);
-	//--- ÄÄÆÄÀÏÀÌ Á¦´ë·Î µÇÁö ¾ÊÀº °æ¿ì: ¿¡·¯ Ã¼Å©
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 	GLint result;
 	GLchar errorLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
 	if (!result)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: vertex shader ÄÄÆÄÀÏ ½ÇÆĞ\n" << errorLog << std::endl;
+		std::cerr << "ERROR: vertex shader ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n" << errorLog << std::endl;
 		return;
 	}
 }
@@ -114,20 +124,20 @@ void make_vertexShaders()
 void make_fragmentShaders()
 {
 	fragmentSource = filetobuf("fragment.glsl");
-	//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ °´Ã¼ ¸¸µé±â
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	//--- ¼¼ÀÌ´õ ÄÚµå¸¦ ¼¼ÀÌ´õ °´Ã¼¿¡ ³Ö±â
+	//--- ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ö±ï¿½
 	glShaderSource(fragmentShader, 1, (const GLchar**)&fragmentSource, 0);
-	//--- ÇÁ·¡±×¸ÕÆ® ¼¼ÀÌ´õ ÄÄÆÄÀÏ
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½Æ® ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	glCompileShader(fragmentShader);
-	//--- ÄÄÆÄÀÏÀÌ Á¦´ë·Î µÇÁö ¾ÊÀº °æ¿ì: ÄÄÆÄÀÏ ¿¡·¯ Ã¼Å©
+	//--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 	GLint result;
 	GLchar errorLog[512];
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
 	if (!result)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
-		std::cerr << "ERROR: fragment shader ÄÄÆÄÀÏ ½ÇÆĞ\n" << errorLog << std::endl;
+		std::cerr << "ERROR: fragment shader ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n" << errorLog << std::endl;
 		return;
 	}
 }

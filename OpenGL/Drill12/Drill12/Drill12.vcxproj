@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f128ff26-0fc6-4bfb-9cf3-9362e657acd5}</ProjectGuid>
-    <RootNamespace>Drill11</RootNamespace>
+    <ProjectGuid>{97708064-a1b3-4014-8e0e-e7d4240fd7f4}</ProjectGuid>
+    <RootNamespace>Drill12</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -125,7 +125,7 @@ freeglut.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Drill11.cpp" />
+    <ClCompile Include="Drill12.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLbasic.h" />

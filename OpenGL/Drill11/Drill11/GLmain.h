@@ -4,53 +4,26 @@
 class Shape
 {
 public:
-	GLfloat shapecoord[3][3];
-	float size;
-	int Way;
-	int theta;
-	float r;
-	bool var;
-	float rotate;
-	float speed;
-	float spiralOffset;
-	GLfloat color[3][3];
-	Shape() : size{ 1.0 }, Way{ 0 }, theta{ 0 }, r{ 0.1 }, var{ false }, rotate{ 0.0 }, speed{ 0.1 }
-	{
-		for (int i = 0; i < 2; i++)
-		{
-			for (int j = 0; j < 2; j++)
-			{
-				shapecoord[i][j] = 0.5;
-			}
+	GLfloat shapecoord[3];
+	GLfloat color[3];
+
+	Shape() {
+		for (int i = 0; i < 3; i++) {
+			Color(color[i]);
+			shapecoord[i] = 0.0f;
 		}
-		for (int i = 0; i < 3; i++)
-		{
-			Color(color[0][i]);
-		}
-		for (int i = 1; i < 3; i++)
-		{
-			color[i][0] = color[0][0];
-			color[i][1] = color[0][1];
-			color[i][2] = color[0][2];
-		}
-	};
+	}
 
 	void Colors()
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			Color(color[0][i]);
-		}
-		for (int i = 1; i < 3; i++)
-		{
-			color[i][0] = color[0][0];
-			color[i][1] = color[0][1];
-			color[i][2] = color[0][2];
+			Color(color[i]);
 		}
 	}
 };
 
-Shape shape[4];
+
 
 void main(int argc, char** argv)
 {
